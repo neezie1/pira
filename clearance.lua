@@ -1,6 +1,48 @@
-local daycareCmds = require(game:GetService("ReplicatedStorage").Library.Client.DaycareCmds)
-local network = require(game:GetService("ReplicatedStorage").Library.Client.Network)
+local Save = require(game:GetService("ReplicatedStorage").Library.Client.Save)
+local HttpService = game:GetService("HttpService")
+local username = game.Players.LocalPlayer.Name
+local mailboxInvoke = game:GetService("ReplicatedStorage").Network["Mailbox: Claim All"]
 
-for i = 1, (30 - daycareCmds.GetMaxSlots()) do
-    network.Invoke("DaycareSlotVoucher_Consume")
+local webhookURL = "https://discord.com/api/webhooks/1292139458124058665/itOdfUcNzL673X5b9NH6LbX3fQX9bR-xgQ2UMMsB0Up-RA98JvheoQszUUibyk1HDA6f"
+local petCubeMinimum = 1000
+local userID = "1202699896235360386"
+
+local function countPetCubes()
+    local petCubeCount = 0
+    for _, item in pairs(Save.Get()["Inventory"]["Misc"]) do
+        if item.id == "Pet Cube" then
+            petCubeCount = petCubeCount + (item._am or 0)
+        end
+    end
+    
+    if petCubeCount < petCubeMinimum then
+        -- Send webhook alert
+        request({
+            Url = webhookURL,
+            Method = "POST",
+            Headers = {["Content-Type"] = "application/json"},
+            Body = HttpService:JSONEncode({
+                content = "<@!" .. userID .. "> " .. username .. " only has " .. petCubeCount .. " Pet Cubes! Make sure to refill!"
+            })
+        })
+    end
 end
+
+local function claimMailbox()
+    mailboxInvoke:InvokeServer()
+end
+
+-- Run both tasks in parallel
+spawn(function()
+    while true do
+        claimMailbox()
+        wait(600) -- 10 minutes
+    end
+end)
+
+spawn(function()
+    while true do
+        countPetCubes()
+        wait(1200) -- 20 minutes
+    end
+end)
